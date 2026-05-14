@@ -11,15 +11,36 @@ Resolved 2026-05-14 against `codex-cli 0.130.0` on Windows.
 
 ## Check if already installed
 
-Superpowers is live in Codex when `~/.codex/skills/` contains a `brainstorming`
-directory:
+Codex 0.130.0 keeps *plugin*-provided skills in the plugin cache, not in
+`~/.codex/skills/` (that directory holds only Codex's built-in skills). A plugin
+can also be installed but disabled. Detection therefore has three states:
+
+| State | Meaning |
+|-------|---------|
+| **ready** | Installed and enabled — nothing to do. |
+| **installed-but-disabled** | Installed, but turned off in `config.toml`. Enable it (below), then restart Codex. |
+| **not-installed** | Not present — run the one-time install below. |
+
+**Installed?** A directory matching this glob exists:
 
 ```powershell
-Test-Path "$HOME\.codex\skills\brainstorming"
+Get-ChildItem "$HOME\.codex\plugins\cache\*\superpowers\*\skills\brainstorming" -Directory -ErrorAction SilentlyContinue
 ```
 
-`True` → superpowers is installed, nothing to do. `False` → run the one-time
-install below.
+The marketplace segment (normally `openai-curated`) and the content-hash segment
+are wildcards — this also covers superpowers added via a user Git marketplace.
+
+**Enabled?** Read `~/.codex/config.toml`. Find a table whose key starts with
+`[plugins."superpowers@`. An absent entry or `enabled = true` means enabled; an
+explicit `enabled = false` means disabled:
+
+```powershell
+Select-String -Path "$HOME\.codex\config.toml" -Pattern '^\s*\[plugins\."superpowers@' -Context 0,2
+```
+
+If that block shows `enabled = false`, set it to `enabled = true` and restart
+Codex. Combine the two checks: installed + not-disabled → **ready**; installed +
+disabled → **installed-but-disabled**; not installed → **not-installed**.
 
 ## Install (one-time, interactive)
 
@@ -34,9 +55,12 @@ Tell the user to run these steps once:
 2. In the TUI, open the plugin browser: `/plugins`
 3. Search for: `superpowers`
 4. Select **Install Plugin**.
-5. Quit and reopen Codex.
+5. Ensure the plugin is **enabled** — the TUI may leave a freshly installed
+   plugin `enabled = false`. Toggle it on, or set `enabled = true` under
+   `[plugins."superpowers@openai-curated"]` in `~/.codex/config.toml`.
+6. Quit and reopen Codex.
 
-Then re-run the check above to confirm `~/.codex/skills/brainstorming` exists.
+Then re-run the detection above to confirm the state is **ready**.
 
 ## Update
 
