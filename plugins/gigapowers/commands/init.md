@@ -22,9 +22,10 @@ Detect Codex-side superpowers using the recipe in
 `${CLAUDE_PLUGIN_ROOT}/references/codex-install.md` ("Check if already
 installed"). Act on the resulting state:
 - **ready** → report OK.
-- **installed-but-disabled** → set `enabled = true` for the superpowers plugin
-  table in `~/.codex/config.toml`, then tell the user to restart Codex for it to
-  take effect. Report as fixed.
+- **installed-but-disabled** → in the existing `[plugins."superpowers@..."]`
+  table in `~/.codex/config.toml`, set the `enabled` key to `true` (it is
+  currently `false` — this state only occurs when that line exists). Then tell
+  the user to restart Codex for it to take effect. Report as fixed.
 - **not-installed** → the Codex-side install is a one-time interactive step
   (codex-cli has no non-interactive plugin install). Relay the install steps
   from that same file to the user and ask them to run them once, then continue —

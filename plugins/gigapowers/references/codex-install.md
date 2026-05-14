@@ -38,9 +38,11 @@ explicit `enabled = false` means disabled:
 Select-String -Path "$HOME\.codex\config.toml" -Pattern '^\s*\[plugins\."superpowers@' -Context 0,10 -ErrorAction SilentlyContinue
 ```
 
-If that block shows `enabled = false`, set it to `enabled = true` and restart
-Codex. Combine the two checks: installed + not-disabled → **ready**; installed +
-disabled → **installed-but-disabled**; not installed → **not-installed**.
+No output from that command means there is no `superpowers@` plugin table —
+treat that as enabled (the default). If the block shows `enabled = false`, set
+it to `enabled = true` and restart Codex. Combine the two checks: installed +
+not-disabled → **ready**; installed + disabled → **installed-but-disabled**; not
+installed → **not-installed**.
 
 ## Install (one-time, interactive)
 
