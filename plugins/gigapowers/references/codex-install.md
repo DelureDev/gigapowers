@@ -12,7 +12,7 @@ Resolved 2026-05-14 against `codex-cli 0.130.0` on Windows.
 ## Check if already installed
 
 Codex 0.130.0 keeps *plugin*-provided skills in the plugin cache, not in
-`~/.codex/skills/` (that directory holds only Codex's built-in skills). A plugin
+`~/.codex/skills/` (that directory does not hold plugin-provided skills). A plugin
 can also be installed but disabled. Detection therefore has three states:
 
 | State | Meaning |
@@ -27,7 +27,7 @@ can also be installed but disabled. Detection therefore has three states:
 Get-ChildItem "$HOME\.codex\plugins\cache\*\superpowers\*\skills\brainstorming" -Directory -ErrorAction SilentlyContinue
 ```
 
-The marketplace segment (normally `openai-curated`) and the content-hash segment
+The marketplace segment (normally `openai-curated`) and an install-specific segment
 are wildcards — this also covers superpowers added via a user Git marketplace.
 
 **Enabled?** Read `~/.codex/config.toml`. Find a table whose key starts with
@@ -35,7 +35,7 @@ are wildcards — this also covers superpowers added via a user Git marketplace.
 explicit `enabled = false` means disabled:
 
 ```powershell
-Select-String -Path "$HOME\.codex\config.toml" -Pattern '^\s*\[plugins\."superpowers@' -Context 0,2
+Select-String -Path "$HOME\.codex\config.toml" -Pattern '^\s*\[plugins\."superpowers@' -Context 0,10 -ErrorAction SilentlyContinue
 ```
 
 If that block shows `enabled = false`, set it to `enabled = true` and restart
