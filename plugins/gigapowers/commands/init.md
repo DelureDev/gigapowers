@@ -1,7 +1,7 @@
 ---
 description: Bootstrap a project for the gigapowers workflow — verify both superpowers stacks, scaffold AGENTS.md / CLAUDE.md / .codex config, ensure git and the Codex stop-gate
 argument-hint: '[--force]'
-allowed-tools: Bash, Read, Write, Skill, AskUserQuestion
+allowed-tools: Bash, Read, Write, Edit, Skill, AskUserQuestion
 ---
 
 Bootstrap the current project for the gigapowers Claude + Codex workflow.
@@ -18,12 +18,17 @@ Read `~/.claude/plugins/installed_plugins.json` and look for
 - Missing → tell the user to run `/plugin install superpowers@claude-plugins-official`.
 
 ## 2. Verify Codex-side superpowers
-Check whether `~/.codex/skills/` contains a `brainstorming` directory.
-- Present → report OK.
-- Missing → the Codex-side install is a one-time interactive step (codex-cli has
-  no non-interactive plugin install). Relay the install steps from
-  `${CLAUDE_PLUGIN_ROOT}/references/codex-install.md` to the user and ask them to
-  run them once, then continue — do not block the remaining steps on it.
+Detect Codex-side superpowers using the recipe in
+`${CLAUDE_PLUGIN_ROOT}/references/codex-install.md` ("Check if already
+installed"). Act on the resulting state:
+- **ready** → report OK.
+- **installed-but-disabled** → set `enabled = true` for the superpowers plugin
+  table in `~/.codex/config.toml`, then tell the user to restart Codex for it to
+  take effect. Report as fixed.
+- **not-installed** → the Codex-side install is a one-time interactive step
+  (codex-cli has no non-interactive plugin install). Relay the install steps
+  from that same file to the user and ask them to run them once, then continue —
+  do not block the remaining steps.
 
 ## 3. Scaffold AGENTS.md
 If `AGENTS.md` is absent (or `--force` was passed), write it from
