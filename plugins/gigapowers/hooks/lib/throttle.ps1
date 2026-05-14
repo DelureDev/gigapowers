@@ -15,8 +15,12 @@ function Test-SyncStale {
     if (-not (Test-Path -LiteralPath $TimestampFile)) { return $true }
     $raw = Get-Content -LiteralPath $TimestampFile -Raw -ErrorAction SilentlyContinue
     if ([string]::IsNullOrWhiteSpace($raw)) { return $true }
-    $parsed = [datetime]::MinValue
-    if (-not [datetime]::TryParse($raw.Trim(), [ref]$parsed)) { return $true }
+    # Parse culture-invariantly: the timestamp is machine-written by
+    # Write-SyncTimestamp (ISO 8601 'o'), so CurrentCulture must not affect it.
+    $parsed  = [datetime]::MinValue
+    $culture = [System.Globalization.CultureInfo]::InvariantCulture
+    $styles  = [System.Globalization.DateTimeStyles]::RoundtripKind
+    if (-not [datetime]::TryParse($raw.Trim(), $culture, $styles, [ref]$parsed)) { return $true }
     return ($Now - $parsed).TotalHours -ge $MaxAgeHours
 }
 
