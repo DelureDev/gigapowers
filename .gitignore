@@ -1,0 +1,7 @@
+# Gigapowers state (created at runtime under the user's home dir, never in-repo)
+.gigapowers/
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+*.swp

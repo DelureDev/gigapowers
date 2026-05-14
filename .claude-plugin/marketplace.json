@@ -1,0 +1,19 @@
+{
+  "name": "gigapowers",
+  "owner": {
+    "name": "DelureDev"
+  },
+  "metadata": {
+    "description": "Gigapowers — a peer-collaboration layer that orchestrates Claude Code + Codex on every project.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "gigapowers",
+      "description": "Makes Claude and Codex build as peers: per-project bootstrap of both superpowers stacks, Codex-side auto-update, and the Claude-vs-Codex orchestration brain.",
+      "version": "0.1.0",
+      "author": { "name": "DelureDev" },
+      "source": "./plugins/gigapowers"
+    }
+  ]
+}

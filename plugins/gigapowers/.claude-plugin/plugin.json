@@ -1,0 +1,13 @@
+{
+  "name": "gigapowers",
+  "version": "0.1.0",
+  "description": "Makes Claude and Codex build as peers: per-project bootstrap of both superpowers stacks, Codex-side auto-update, and the Claude-vs-Codex orchestration brain.",
+  "author": {
+    "name": "DelureDev",
+    "url": "https://github.com/DelureDev"
+  },
+  "homepage": "https://github.com/DelureDev/gigapowers",
+  "repository": "https://github.com/DelureDev/gigapowers",
+  "license": "MIT",
+  "keywords": ["codex", "orchestration", "superpowers", "workflow", "collaboration"]
+}
