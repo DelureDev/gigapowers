@@ -17,11 +17,16 @@ collaboration *substantive*, not ceremonial.
 | Design / brainstorm | Stress-tests an approach when 2+ are viable | `codex exec` consult |
 | Planning | Reads the plan for gaps and missed edge cases | `codex exec` consult |
 | Implementation | Takes parallel batch work; second opinion on a tricky unit | `codex:codex-rescue` agent |
-| Before "done" | Adversarial review of the diff | codex plugin's Stop gate (automatic) |
+| Before "done" | Adversarial review of the diff | Stop-gate if enabled, else `codex exec` yourself |
 | Stuck (2+ failed debug rounds) | Fresh-context diagnosis | `codex:codex-rescue` agent |
 
-You decide the judgment-call rows. The Stop-gate row fires automatically — do
-not duplicate it.
+You decide the judgment-call rows. **Pre-completion adversarial review is your
+responsibility either way.** The codex plugin's Stop-gate automates it *when
+enabled* — but the gate is optional and may be off. Before declaring a
+non-trivial task done, confirm a Codex adversarial pass actually happened: if
+the Stop-gate is on it fired automatically (don't duplicate it); if it's off,
+run one yourself with `codex exec`. Never skip the review on the assumption the
+gate covered it.
 
 ## How to consult Codex (the part that matters)
 

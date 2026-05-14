@@ -49,8 +49,16 @@ If `git rev-parse --is-inside-work-tree` fails, run `git init` then
 `git branch -M main`.
 
 ## 7. Ensure the Codex stop-gate
-Invoke the `codex:setup` skill to confirm Codex is installed and authenticated
-and that the stop-time review gate is enabled.
+Invoke the `codex:setup` skill with `--enable-review-gate` to enable the
+stop-time review gate, then **verify it actually took** — `codex:setup` reports
+the review-gate state; confirm it reads **enabled**. Do not report this step
+done on the strength of the invocation alone.
+- Review gate verified enabled → report **done**.
+- Codex unavailable or not authenticated → report **needs user action** with the
+  reason `codex:setup` gave; do not claim the gate is on.
+- Invoked but the state still reads disabled → report **needs user action**:
+  "stop-gate did not enable — run `/codex:setup --enable-review-gate` and
+  confirm Codex is set up."
 
 ## 8. Summary
 Print a table with one row per step above: the step name and whether it was
