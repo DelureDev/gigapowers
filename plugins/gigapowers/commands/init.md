@@ -28,7 +28,7 @@ installed"). Act on the resulting state:
 - **not-installed** → the Codex-side install is a one-time interactive step
   (codex-cli has no non-interactive plugin install). Relay the install steps
   from that same file to the user and ask them to run them once, then continue —
-  do not block the remaining steps.
+  do not block the remaining steps on it.
 
 ## 3. Scaffold AGENTS.md
 If `AGENTS.md` is absent (or `--force` was passed), write it from
