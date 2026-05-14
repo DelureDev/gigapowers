@@ -1,0 +1,9 @@
+# Project-level Codex configuration.
+# Overrides ~/.codex/config.toml for work inside this project.
+
+# Pin a model only if this project genuinely needs one — otherwise leave it
+# commented out and inherit whatever the user's ~/.codex/config.toml selects,
+# so the project does not rot against an aging model string.
+# model = "gpt-5.3-codex"
+
+model_reasoning_effort = "high"
