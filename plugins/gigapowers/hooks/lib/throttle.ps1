@@ -39,3 +39,51 @@ function Write-SyncTimestamp {
     }
     $Now.ToString('o') | Set-Content -LiteralPath $TimestampFile -Encoding utf8
 }
+
+function Test-AcquireSyncLock {
+    <#
+      Atomically claims the sync lock. Creates $LockFile only if it does not
+      already exist (FileMode CreateNew is atomic), so two concurrent
+      SessionStart events cannot both win. Returns $true when this caller now
+      owns the lock, $false when another caller already holds it.
+
+      An abandoned lock (a crashed session that never released it) older than
+      $StaleMinutes is reclaimed -- the real lock is only held for the
+      milliseconds it takes to dispatch a detached process, so any lock that
+      old is dead.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$LockFile,
+        [int]$StaleMinutes = 5,
+        [datetime]$Now = (Get-Date)
+    )
+    $dir = Split-Path -Parent $LockFile
+    if ($dir -and -not (Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    if (Test-Path -LiteralPath $LockFile) {
+        $age = $Now - (Get-Item -LiteralPath $LockFile).LastWriteTime
+        if ($age.TotalMinutes -ge $StaleMinutes) {
+            Remove-Item -LiteralPath $LockFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+    try {
+        $fs = [System.IO.File]::Open($LockFile, [System.IO.FileMode]::CreateNew)
+        $fs.Close()
+        return $true
+    } catch {
+        return $false
+    }
+}
+
+function Remove-SyncLock {
+    <#
+      Releases the sync lock. Safe to call when the lock is already gone.
+      Parameter is named -TimestampFile to match the other throttle helpers;
+      pass the lock-file path.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$TimestampFile
+    )
+    Remove-Item -LiteralPath $TimestampFile -Force -ErrorAction SilentlyContinue
+}
