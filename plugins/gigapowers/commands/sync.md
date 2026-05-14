@@ -11,8 +11,9 @@ Codex keeps current itself. `codex plugin marketplace upgrade` refreshes any
 This command is the manual escape hatch for that defensive refresh plus a
 throttle reset.
 
-1. If `codex` is not installed or `~/.codex/auth.json` is missing, report that
-   clearly and stop — do not write the timestamp.
+1. If `codex` is not installed, or `codex login status` exits non-zero, report
+   that clearly and stop — do not write the timestamp. (`codex login status`
+   catches stale or invalid credentials that a bare `auth.json` file does not.)
 2. Run `codex plugin marketplace upgrade` and capture the output.
 3. Write the current timestamp (ISO 8601, e.g. the output of
    `(Get-Date).ToString('o')`) to `~/.gigapowers/last-sync`, creating the

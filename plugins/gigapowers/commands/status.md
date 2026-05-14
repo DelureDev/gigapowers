@@ -13,8 +13,10 @@ Report gigapowers health. This command is read-only — change nothing.
    note "run /gigapowers:init to enable"), or **not installed**. This command is
    read-only — report state, do not edit `config.toml`.
 3. **Codex CLI** — run `codex --version`; report the version, or "not installed".
-4. **Codex auth** — check whether `~/.codex/auth.json` exists; report
-   authenticated or not.
+4. **Codex auth** — run `codex login status`; report **authenticated** when it
+   exits 0 (e.g. prints "Logged in using ChatGPT"), otherwise **not
+   authenticated**. Do not infer auth from `~/.codex/auth.json` existing — that
+   file can be present but hold stale or invalid credentials.
 5. **Last auto-update** — read `~/.gigapowers/last-sync`; report the timestamp
    and how long ago that was, or "never".
 6. **Stop-gate** — report whether the codex plugin's stop-review gate is
