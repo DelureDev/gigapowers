@@ -30,6 +30,11 @@ Get-ChildItem "$HOME\.codex\plugins\cache\*\superpowers\*\skills\brainstorming" 
 The marketplace segment (normally `openai-curated`) and an install-specific segment
 are wildcards — this also covers superpowers added via a user Git marketplace.
 
+> **Caveat:** this check reads Codex's internal plugin-cache layout
+> (`~/.codex/plugins/cache/...`), which is not a stable public contract. If a
+> future codex-cli reorganizes that cache the glob will need updating. There is
+> no plugin-state query API in codex-cli 0.130.0; revisit this if one ships.
+
 **Enabled?** Read `~/.codex/config.toml`. Find a table whose key starts with
 `[plugins."superpowers@`. An absent entry or `enabled = true` means enabled; an
 explicit `enabled = false` means disabled:
@@ -82,5 +87,7 @@ Even though updates are largely Codex's job, the SessionStart hook:
 
 - runs `codex plugin marketplace upgrade` defensively (cheap, covers user-added
   Git marketplaces),
-- is the natural home for the readiness check (is `codex` on PATH? authed?),
+- does a cheap readiness check — is `codex` on `PATH`? (a missing `codex` means
+  there is nothing to refresh). Auth is *not* checked here; that is
+  `/gigapowers:status`'s job, via `codex login status`,
 - keeps a throttle timestamp so `/gigapowers:status` can report "last checked".
