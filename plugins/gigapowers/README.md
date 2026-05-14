@@ -14,7 +14,7 @@ keeps the Codex side current, and carries the orchestration brain.
   stacks, scaffolds `AGENTS.md` / `CLAUDE.md` / `.codex/config.toml`, ensures
   git and the Codex stop-gate.
 - **`/gigapowers:status`** — health check of both stacks, Codex auth, last
-  auto-update.
+  sync attempt.
 - **`/gigapowers:sync`** — force a Codex-side defensive refresh now.
 - **`orchestrating-codex` skill** — the brain: when and how Claude brings Codex
   in across design, planning, implementation, review, and debugging.

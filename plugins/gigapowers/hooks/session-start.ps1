@@ -7,6 +7,10 @@
 # defensive -- it refreshes any *user-added* Git marketplaces and is a harmless
 # no-op otherwise. See references/codex-install.md.
 
+# Hook contract (see header): never block or fail the session. Errors in here
+# are not actionable for the user mid-session, so they are suppressed globally
+# and the script always exits 0. Diagnose refresh problems via
+# `/gigapowers:status`, not via hook output.
 $ErrorActionPreference = 'SilentlyContinue'
 
 . "$PSScriptRoot/lib/throttle.ps1"
