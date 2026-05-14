@@ -1,0 +1,5 @@
+# Project-level Codex configuration.
+# Overrides ~/.codex/config.toml for work inside this project.
+
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
