@@ -19,14 +19,22 @@ $stamp    = Join-Path $stateDir 'last-sync'
 $codex = Get-Command codex -ErrorAction SilentlyContinue
 if (-not $codex) { exit 0 }
 
-# Throttled refresh. The timestamp is written on *dispatch*, not completion:
-# if the upgrade fails (e.g. offline) the next attempt is the following stale
-# window. This is the documented v1 tradeoff (spec section 8).
-if (Test-SyncStale -TimestampFile $stamp) {
-    # Detach the slow upgrade so session start is never blocked.
-    Start-Process -WindowStyle Hidden -FilePath $codex.Source `
-        -ArgumentList 'plugin','marketplace','upgrade' -ErrorAction SilentlyContinue
-    Write-SyncTimestamp -TimestampFile $stamp
+# Throttled refresh, guarded by an atomic lock so two concurrent SessionStart
+# events cannot both dispatch. The timestamp is written on *dispatch*, not
+# completion: if the upgrade fails (e.g. offline) the next attempt is the
+# following stale window. This is the documented v1 tradeoff (spec section 8).
+$lock = "$stamp.lock"
+if (Test-AcquireSyncLock -LockFile $lock) {
+    try {
+        if (Test-SyncStale -TimestampFile $stamp) {
+            # Detach the slow upgrade so session start is never blocked.
+            Start-Process -WindowStyle Hidden -FilePath $codex.Source `
+                -ArgumentList 'plugin','marketplace','upgrade' -ErrorAction SilentlyContinue
+            Write-SyncTimestamp -TimestampFile $stamp
+        }
+    } finally {
+        Remove-SyncLock -TimestampFile $lock
+    }
 }
 
 exit 0

@@ -40,6 +40,25 @@ try {
     Write-SyncTimestamp -TimestampFile $nested -Now $now
     Assert-Equal $true (Test-Path $nested) 'Write-SyncTimestamp creates nested dirs + file'
     Assert-Equal $false (Test-SyncStale -TimestampFile $nested -Now $now) 'just-written timestamp not stale'
+
+    # --- sync lock (Task 4: TOCTOU fix) ---
+    $lock = "$tmp/sync.lock"
+    Assert-Equal $true  (Test-AcquireSyncLock -LockFile $lock) 'first acquire wins the lock'
+    Assert-Equal $false (Test-AcquireSyncLock -LockFile $lock) 'second acquire is refused while lock is held'
+    Remove-SyncLock -TimestampFile $lock
+    Assert-Equal $false (Test-Path $lock) 'Remove-SyncLock deletes the lock file'
+    Assert-Equal $true  (Test-AcquireSyncLock -LockFile $lock) 'acquire succeeds again after release'
+    Remove-SyncLock -TimestampFile $lock
+
+    $nestedLock = "$tmp/x/y/sync.lock"
+    Assert-Equal $true (Test-AcquireSyncLock -LockFile $nestedLock) 'acquire creates the nested lock dir'
+    Remove-SyncLock -TimestampFile $nestedLock
+
+    $staleLock = "$tmp/stale.lock"
+    New-Item -ItemType File -Path $staleLock | Out-Null
+    (Get-Item $staleLock).LastWriteTime = $now.AddMinutes(-10)
+    Assert-Equal $true (Test-AcquireSyncLock -LockFile $staleLock -Now $now) 'abandoned lock (>5m old) is reclaimed'
+    Remove-SyncLock -TimestampFile $staleLock
 }
 finally {
     Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
