@@ -23,8 +23,12 @@ $stamp    = Join-Path $stateDir 'last-sync'
 $codex = Get-Command codex -ErrorAction SilentlyContinue
 if (-not $codex) { exit 0 }
 
-# Throttled refresh, guarded by an atomic lock so two concurrent SessionStart
-# events cannot both dispatch. The timestamp is written on *dispatch*, not
+# Throttled refresh, guarded by a lock so concurrent SessionStart events race
+# for a single winner. The lock only serializes hook-side dispatches -- a
+# user-triggered /gigapowers:sync runs outside this path and can still race a
+# hook dispatch in a rare window (impact: a duplicate, idempotent
+# `codex plugin marketplace upgrade`). See lib/throttle.ps1 for the
+# stale-reclaim tradeoff. The timestamp is written on *dispatch*, not
 # completion: if the upgrade fails (e.g. offline) the next attempt is the
 # following stale window. This is the documented v1 tradeoff (spec section 8).
 $lock = "$stamp.lock"

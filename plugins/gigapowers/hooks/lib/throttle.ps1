@@ -42,15 +42,20 @@ function Write-SyncTimestamp {
 
 function Test-AcquireSyncLock {
     <#
-      Atomically claims the sync lock. Creates $LockFile only if it does not
-      already exist (FileMode CreateNew is atomic), so two concurrent
-      SessionStart events cannot both win. Returns $true when this caller now
-      owns the lock, $false when another caller already holds it.
+      Claims the sync lock. The CreateNew open below is the atomic primitive:
+      in the common path, two concurrent SessionStart events race for it and
+      only one wins; the other returns $false and skips dispatch.
 
       An abandoned lock (a crashed session that never released it) older than
       $StaleMinutes is reclaimed -- the real lock is only held for the
       milliseconds it takes to dispatch a detached process, so any lock that
-      old is dead.
+      old is dead. The stale-reclaim path is *not* atomic: if two callers both
+      observe the same stale lock, the second caller's reclaim can race the
+      first caller's fresh lock. The blast radius is bounded -- worst case is
+      a duplicate `codex plugin marketplace upgrade` dispatch within
+      milliseconds, which is idempotent -- so this is a deliberate v1 tradeoff
+      rather than a true mutex. If a future use case widens the blast radius,
+      replace this with a proper named-mutex / file-lock.
     #>
     param(
         [Parameter(Mandatory)][string]$LockFile,
