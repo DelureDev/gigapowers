@@ -71,8 +71,12 @@ that always agree add nothing over one.
   batch implementation, deep diagnosis, a full second-opinion pass.
 - **`codex exec "..."`** (via the shell) — for lightweight inline consults
   during design and planning.
-- **Never type `/codex:*` slash commands** — those are user-only. If the user
-  should run one, tell them to.
+- **User-only slash commands** — `/codex:review`, `/codex:adversarial-review`,
+  `/codex:rescue`, `/codex:status`, `/codex:result`, `/codex:cancel`. Never
+  invoke these via the Skill tool or otherwise; if the user should run one,
+  tell them to. Other `/codex:*` commands (e.g. `/codex:setup`) are *not*
+  user-only — Claude can invoke them via the Skill tool when a workflow calls
+  for it.
 - Announce before calling: one sentence — "Consulting Codex for <reason>."
 - Cost awareness: each call burns ChatGPT Pro quota. Call when it adds value,
   not as ritual.
