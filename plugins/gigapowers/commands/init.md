@@ -49,18 +49,21 @@ If `git rev-parse --is-inside-work-tree` fails, run `git init` then
 `git branch -M main`.
 
 ## 7. Ensure the Codex stop-gate
-Invoke the `codex:setup` skill with `--enable-review-gate` to enable the
-stop-time review gate, then **verify it actually took** — `codex:setup` reports
-the review-gate state; confirm it reads **enabled** (look for
-`reviewGateEnabled: true`, or an explicit "review gate: enabled" line, in the
-output). Do not report this step done on the strength of the invocation alone.
+Invoke the `codex:setup` *skill* (via the Skill tool, passing
+`--enable-review-gate` as args) to enable the stop-time review gate, then
+**verify it actually took** — the skill reports the review-gate state; confirm
+it reads **enabled** (look for `reviewGateEnabled: true`, or an explicit
+"review gate: enabled" line, in the output). Do not report this step done on
+the strength of the invocation alone. The skill `codex:setup` and the user-only
+slash command `/codex:setup` share a name but are different mechanisms — Claude
+can invoke the skill but cannot type the slash command.
 - Review gate verified enabled → report **done**.
 - Codex unavailable or not authenticated → report **needs user action** with the
   reason `codex:setup` gave; do not claim the gate is on.
 - Invoked but the state still reads disabled → report **needs user action** and
   tell the user to run `/codex:setup --enable-review-gate` themselves, then
-  confirm Codex is set up. (`/codex:*` commands are user-only — you cannot run
-  them.)
+  confirm Codex is set up. (`/codex:*` *slash* commands are user-only — you
+  cannot run them; only the same-named skill.)
 
 ## 8. Summary
 Print a table with one row per step above: the step name and whether it was

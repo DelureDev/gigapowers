@@ -34,6 +34,10 @@ Then in any project: `/gigapowers:init`.
 
 - Claude Code with the `superpowers` and `codex@openai-codex` plugins.
 - Codex CLI (`codex`) installed and authenticated.
+- Node.js — used by the SessionStart hook launcher (`hooks/session-start.mjs`)
+  and the `scripts/bump-version.mjs` release script. The `codex@openai-codex`
+  plugin already ships its own Node entry point, so a Claude Code setup that
+  has that plugin working has Node available.
 - Windows (the SessionStart hook is PowerShell; a bash fallback is planned).
 
 ## Codex-side superpowers
