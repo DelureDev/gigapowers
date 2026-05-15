@@ -1,6 +1,6 @@
 {
   "name": "gigapowers",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Makes Claude and Codex build as peers: per-project bootstrap of both superpowers stacks, Codex-side auto-update, and the Claude-vs-Codex orchestration brain.",
   "author": {
     "name": "DelureDev",
